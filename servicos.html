@@ -45,6 +45,23 @@
         .btn-saiba-mais:hover { color: #000; background: var(--primary); }
 
         footer { padding: 4rem 10%; text-align: center; border-top: 1px solid var(--border); color: #475569; font-size: 0.9rem; background: #030508; margin-top: auto; }
+        
+        .footer-links { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 1.5rem; 
+            margin-top: 15px; 
+        }
+        .footer-links a { 
+            color: inherit; 
+            text-decoration: none; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+        }
+        .footer-links a:hover { color: var(--primary); }
+
         @media (max-width: 1200px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
     </style>
@@ -76,7 +93,15 @@
             <a href="contato.html" class="btn-saiba-mais animate-discreet d-7">Saiba Mais</a>
         </section>
     </main>
-    <footer><p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p></footer>
+    <footer>
+        <p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p>
+        <div class="footer-links">
+            <a href="privacidade.html">Aviso de Privacidade</a>
+            <a href="https://www.linkedin.com/company/cytracks" target="_blank">
+                <i data-lucide="linkedin" size="18"></i>
+            </a>
+        </div>
+    </footer>
     <script>lucide.createIcons();</script>
 </body>
 </html>

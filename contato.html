@@ -211,6 +211,22 @@
             font-size: 0.9rem; 
             margin-top: auto; 
         }
+
+        .footer-links { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 1.5rem; 
+            margin-top: 15px; 
+        }
+        .footer-links a { 
+            color: inherit; 
+            text-decoration: none; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+        }
+        .footer-links a:hover { color: var(--primary); }
         
         @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
     </style>
@@ -271,6 +287,12 @@
 
     <footer>
         <p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p>
+        <div class="footer-links">
+            <a href="privacidade.html">Aviso de Privacidade</a>
+            <a href="https://www.linkedin.com/company/cytracks" target="_blank">
+                <i data-lucide="linkedin" size="18"></i>
+            </a>
+        </div>
     </footer>
 
     <script>
