@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyTracks Soluções Cibernéticas</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/ISlc727.png">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0c; 
+            --primary: #9D00FF; 
+            --text-dim: #94a3b8; 
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: #fff; 
+            overflow-x: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 180vh; 
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        body.scrolled-past {
+            background-color: #ffffff !important;
+            color: #000000;
+        }
+
+        header { 
+            padding: 0 10%; height: 100px; display: flex; justify-content: space-between; align-items: center; 
+            position: fixed; top: 0; left: 0; width: 100%; background: transparent; z-index: 1000; 
+            transition: 0.5s;
+        }
+        .main-logo { height: 48px; transition: filter 0.5s; }
+        
+        body.scrolled-past header { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #eee; }
+        body.scrolled-past .nav-link, body.scrolled-past .drop-trigger { color: #666; }
+        body.scrolled-past .nav-link:hover, body.scrolled-past .nav-link.active { color: #000; }
+        body.scrolled-past .main-logo { filter: invert(1); }
+
+        nav { display: flex; gap: 2.5rem; align-items: center; height: 100%; }
+        .nav-link { 
+            color: var(--text-dim); text-decoration: none; font-weight: 500; font-size: 0.85rem; 
+            text-transform: uppercase; letter-spacing: 1.2px; position: relative; padding: 0.5rem 0; 
+            transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--primary); transition: 0.3s; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        .dropdown { position: relative; height: 100%; display: flex; align-items: center; cursor: pointer; }
+        .drop-trigger { display: flex; align-items: center; gap: 0.5rem; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; }
+        .drop-menu { 
+            position: absolute; top: 85px; left: -20px; background: #0d1117; 
+            border: 1px solid var(--border); border-top: 3px solid var(--primary); 
+            min-width: 240px; padding: 0.8rem 0; opacity: 0; visibility: hidden; 
+            display: flex; flex-direction: column; transition: 0.3s; transform: translateY(10px); 
+        }
+        .dropdown:hover .drop-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .drop-menu a { display: block; padding: 0.8rem 1.5rem; color: var(--text-dim); text-decoration: none; font-size: 0.85rem; }
+        .drop-menu a:hover { background: rgba(157, 0, 255, 0.05); color: var(--primary); }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .hero { padding: 180px 0 60px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .hero-content { padding: 0 10%; margin-bottom: 2rem; width: 100%; }
+        .hero h1 { font-size: 4.5rem; font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin-bottom: 1.5rem; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { font-size: 1.25rem; color: var(--text-dim); max-width: 750px; line-height: 1.6; margin: 0 auto; }
+
+        .video-wrapper {
+            width: 100%; position: relative; background: #000; margin: 3rem 0; cursor: pointer; overflow: hidden;
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        video { width: 100%; height: auto; max-height: 75vh; object-fit: cover; opacity: 0.6; transition: opacity 1.2s ease; display: block; }
+        .video-wrapper.playing video { opacity: 1; }
+
+        .video-play-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.4s ease; z-index: 10; backdrop-filter: blur(4px);
+        }
+        .video-wrapper.playing .video-play-btn { opacity: 0; visibility: hidden; }
+
+        .content-after { padding: 120px 10%; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .content-after h2 { font-size: 3rem; margin-bottom: 2rem; letter-spacing: -1px; }
+        .content-after p { max-width: 800px; font-size: 1.2rem; line-height: 1.8; margin: 0 auto; color: inherit; }
+
+        footer { padding: 4rem 10%; text-align: center; border-top: 1px solid var(--border); color: #475569; font-size: 0.9rem; margin-top: auto; }
+        body.scrolled-past footer { border-top-color: #eee; }
+
+        @media (max-width: 768px) { .hero h1 { font-size: 2.8rem; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html"><img src="https://i.imgur.com/VC5Re3G.png" class="main-logo"></a>
+        <nav>
+            <a href="index.html" class="nav-link active">Início</a>
+            <a href="quemsomos.html" class="nav-link">Quem Somos</a>
+            <div class="dropdown">
+                <span class="drop-trigger">Nossos Parceiros <i data-lucide="chevron-down" size="16"></i></span>
+                <div class="drop-menu">
+                    <a href="abnormal.html">Abnormal IA</a>
+                    <a href="semperis.html">Semperis</a>
+                    <a href="safetica.html">Safetica</a>
+                </div>
+            </div>
+            <a href="servicos.html" class="nav-link">Serviços</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content reveal">
+                <h1>Defesa Ativa. <span>Resiliência</span> Total.</h1>
+                <p>Elevamos a maturidade de segurança da sua empresa com inteligência cibernética e soluções de última geração.</p>
+            </div>
+            <div class="video-wrapper reveal" id="vidContainer">
+                <video id="mainVid" playsinline>
+                    <source src="https://i.imgur.com/wJgosTU.mp4" type="video/mp4">
+                </video>
+                <div class="video-play-btn" id="playBtn"><i data-lucide="play" size="24"></i></div>
+            </div>
+        </section>
+
+        <div id="scrollTrigger"></div>
+
+        <section class="content-after reveal">
+            <h2>Excelência em Defesa Cibernética</h2>
+            <p>A CyTracks combina as tecnologias mais disruptivas do mercado com uma arquitetura consultiva focada em resultados reais e proteção contínua de ativos críticos.</p>
+        </section>
+    </main>
+
+    <footer><p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p></footer>
+
+    <script>
+        lucide.createIcons();
+        const video = document.getElementById('mainVid');
+        const container = document.getElementById('vidContainer');
+        const body = document.body;
+        const trigger = document.getElementById('scrollTrigger');
+
+        container.addEventListener('click', () => {
+            if (video.paused) { video.play(); container.classList.add('playing'); }
+            else { video.pause(); container.classList.remove('playing'); }
+        });
+        video.onended = () => { container.classList.remove('playing'); };
+
+        const colorObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) body.classList.add('scrolled-past');
+                else body.classList.remove('scrolled-past');
+            });
+        }, { threshold: 0 });
+        colorObserver.observe(trigger);
+
+        const revealElements = document.querySelectorAll('.reveal');
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.15 });
+        revealElements.forEach(el => scrollObserver.observe(el));
+    </script>
+</body>
+</html>

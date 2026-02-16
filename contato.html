@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyTracks Soluções Cibernéticas</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/ISlc727.png">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { 
+            --bg: #000000; 
+            --primary: #a7fd2a; 
+            --text-dim: #94a3b8; 
+            --border: rgba(255, 255, 255, 0.08); 
+            --card-bg: #0d1117; 
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--bg); 
+            background-image: url('https://i.imgur.com/bcHQtZx.png'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            color: #fff; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            position: relative; 
+            overflow-x: hidden;
+        }
+        
+        body::before { 
+            content: ''; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.85); 
+            z-index: -1; 
+        }
+        
+        @keyframes smoothFadeUp { 
+            from { opacity: 0; transform: translateY(20px); filter: blur(2px); } 
+            to { opacity: 1; transform: translateY(0); filter: blur(0); } 
+        }
+        
+        .animate-discreet { 
+            opacity: 0; 
+            animation: smoothFadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
+        }
+        
+        .d-1 { animation-delay: 0.1s; } 
+        .d-2 { animation-delay: 0.3s; } 
+        .d-3 { animation-delay: 0.4s; } 
+        .d-4 { animation-delay: 0.6s; }
+        
+        header { 
+            padding: 0 10%; 
+            height: 100px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 1000; 
+        }
+        
+        .main-logo { height: 48px; }
+        nav { display: flex; gap: 2.5rem; align-items: center; }
+        
+        .nav-link { 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            font-weight: 500; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.2px; 
+            position: relative; 
+            padding: 0.5rem 0; 
+            transition: 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        .nav-link::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 0; 
+            height: 2px; 
+            background: var(--primary); 
+            transition: 0.3s; 
+        }
+        .nav-link.active::after { width: 100%; }
+
+        .dropdown { position: relative; height: 100%; display: flex; align-items: center; cursor: pointer; }
+        .drop-trigger { display: flex; align-items: center; gap: 0.5rem; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; }
+        .drop-menu { 
+            position: absolute; 
+            top: 85px; 
+            left: -20px; 
+            background: #0d1117; 
+            border: 1px solid var(--border); 
+            border-top: 3px solid var(--primary); 
+            min-width: 240px; 
+            padding: 0.8rem 0; 
+            opacity: 0; 
+            visibility: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            transition: 0.3s; 
+            transform: translateY(10px); 
+        }
+        .dropdown:hover .drop-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .drop-menu a { display: block; padding: 0.8rem 1.5rem; color: var(--text-dim); text-decoration: none; font-size: 0.8rem; }
+        .drop-menu a:hover { background: rgba(167, 253, 42, 0.05); color: var(--primary); }
+
+        main { 
+            padding: 180px 10% 80px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            width: 100%; 
+            flex: 1; 
+            display: grid; 
+            grid-template-columns: 1fr 450px; 
+            gap: 5rem; 
+            align-items: start; 
+        }
+        
+        .contact-header h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 2rem; }
+        .contact-header h1 span { color: var(--primary); }
+        .whatsapp-link { font-size: 1.25rem; color: #fff; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 0.8rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-control { 
+            width: 100%; 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border); 
+            padding: 1rem; 
+            color: #fff; 
+            border-radius: 4px; 
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); }
+        
+        .btn-send { 
+            padding: 1rem; 
+            background: transparent; 
+            border: 1px solid var(--primary); 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            width: 100%; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .btn-send:hover { background: var(--primary); color: #000; }
+        .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* --- MODAL DE SUCESSO --- */
+        #modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(10px); 
+            display: none; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000; 
+        }
+        
+        .modal-box { 
+            background: var(--card-bg); 
+            border: 2px solid var(--primary); 
+            padding: 3rem; 
+            border-radius: 12px; 
+            text-align: center; 
+            max-width: 450px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-box i { color: var(--primary); margin-bottom: 1.5rem; }
+        .modal-box h2 { font-size: 1.8rem; margin-bottom: 1rem; color: #fff; }
+        .modal-box p { color: var(--text-dim); line-height: 1.6; margin-bottom: 2rem; }
+        
+        .btn-modal-close { 
+            background: var(--primary); 
+            color: #000; 
+            border: none; 
+            padding: 0.8rem 2.5rem; 
+            cursor: pointer; 
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .btn-modal-close:hover { opacity: 0.9; transform: scale(1.05); }
+
+        footer { 
+            padding: 4rem 10%; 
+            text-align: center; 
+            border-top: 1px solid var(--border); 
+            color: #475569; 
+            font-size: 0.9rem; 
+            margin-top: auto; 
+        }
+        
+        @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html"><img src="https://i.imgur.com/VC5Re3G.png" class="main-logo"></a>
+        <nav>
+            <a href="index.html" class="nav-link">Início</a>
+            <a href="quemsomos.html" class="nav-link">Quem Somos</a>
+            <div class="dropdown">
+                <span class="drop-trigger">Nossos Parceiros <i data-lucide="chevron-down" size="16"></i></span>
+                <div class="drop-menu">
+                    <a href="abnormal.html">Abnormal IA</a>
+                    <a href="semperis.html">Semperis</a>
+                    <a href="safetica.html">Safetica</a>
+                </div>
+            </div>
+            <a href="servicos.html" class="nav-link">Serviços</a>
+            <a href="contato.html" class="nav-link active">Contato</a>
+        </nav>
+    </header>
+
+    <div id="modal-overlay">
+        <div class="modal-box">
+            <i data-lucide="check-circle" size="64"></i>
+            <h2>Enviado com Sucesso!</h2>
+            <p>Recebemos suas informações. Em breve a equipe CyTracks entrará em contato para dar continuidade ao seu atendimento.</p>
+            <button class="btn-modal-close" onclick="closeModal()">Entendido</button>
+        </div>
+    </div>
+
+    <main>
+        <div class="contact-header">
+            <h1 class="animate-discreet d-1">Fale com a <span>CyTracks</span></h1>
+            <p class="animate-discreet d-2">Entre em contato para elevar a maturidade de segurança da sua empresa.</p>
+            <a href="https://wa.me/5511983924500" class="whatsapp-link animate-discreet d-3">
+                <i data-lucide="message-circle" size="24"></i> (11) 98392-4500
+            </a>
+        </div>
+
+        <form class="animate-discreet d-4" id="contactForm">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_subject" value="Novo Lead: Site CyTracks">
+
+            <div class="form-group">
+                <input type="text" name="nome" id="nameField" class="form-control" placeholder="Nome" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" id="emailField" class="form-control" placeholder="E-mail" required>
+            </div>
+            <div class="form-group">
+                <textarea name="mensagem" id="messageField" class="form-control" placeholder="Mensagem" required></textarea>
+            </div>
+            <button type="submit" class="btn-send" id="submitBtn">Enviar</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const modal = document.getElementById('modal-overlay');
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        function closeModal() { modal.style.display = 'none'; }
+
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Mudar estado do botão
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Enviando...';
+
+            // Pegar os dados do formulário
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            // Enviar via AJAX para o FormSubmit
+            fetch('https://formsubmit.co/ajax/wsilva@cytracks.io', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar o Modal de Sucesso
+                modal.style.display = 'flex';
+                
+                // Resetar formulário
+                contactForm.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Enviar';
+                
+                // Limpar sessionStorage
+                ['nameField', 'emailField', 'messageField'].forEach(id => sessionStorage.removeItem(id));
+            })
+            .catch(error => {
+                alert('Ocorreu um erro ao enviar. Por favor, tente novamente ou use o WhatsApp.');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Enviar';
+            });
+        });
+
+        // Persistência simples dos dados
+        const fields = ['nameField', 'emailField', 'messageField'];
+        window.onload = () => fields.forEach(id => { 
+            if(sessionStorage.getItem(id)) document.getElementById(id).value = sessionStorage.getItem(id); 
+        });
+        fields.forEach(id => document.getElementById(id).oninput = (e) => sessionStorage.setItem(id, e.target.value));
+    </script>
+</body>
+</html>

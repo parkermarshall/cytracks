@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyTracks / Semperis</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/ISlc727.png">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #ffffff; 
+            --primary: #00d9ff; 
+            --accent: #2563eb; 
+            --text-dark: #0f172a;
+            --text-dim: #64748b; 
+            --border: rgba(15, 23, 42, 0.08);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        #loader-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; pointer-events: none; display: flex; flex-direction: column;
+        }
+        .loader-panel { flex: 1; background: #030508; width: 100%; transition: transform 1s cubic-bezier(0.8, 0, 0.2, 1); }
+        .panel-top { transform-origin: top; }
+        .panel-bottom { transform-origin: bottom; }
+        .scan-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--accent); box-shadow: 0 0 25px var(--accent);
+            z-index: 10000; opacity: 0; transition: opacity 0.3s;
+        }
+        .loaded .panel-top { transform: translateY(-100%); }
+        .loaded .panel-bottom { transform: translateY(100%); }
+        .loaded .scan-line { animation: scanMove 1.2s cubic-bezier(0.8, 0, 0.2, 1) forwards; opacity: 1; }
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; opacity: 0; } }
+
+        .content-fade { opacity: 0; transition: 1s ease-out 0.8s; }
+        .loaded .content-fade { opacity: 1; }
+
+        body { background-color: var(--bg); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* --- HEADER AJUSTADO --- */
+        header { 
+            padding: 0 10%; height: 100px; display: flex; justify-content: space-between; align-items: center; 
+            position: absolute; top: 0; left: 0; width: 100%; background: #030508;
+            z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .main-logo { height: 48px; }
+        nav { display: flex; gap: 2.5rem; align-items: center; height: 100%; }
+        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; position: relative; padding: 0.5rem 0; }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--primary); transition: 0.3s; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        .dropdown { position: relative; height: 100%; display: flex; align-items: center; cursor: pointer; }
+        .drop-trigger { display: flex; align-items: center; gap: 0.5rem; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .drop-menu { 
+            position: absolute; top: 100px; left: 0; background: #0d1117; border: 1px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); 
+            min-width: 220px; padding: 0.6rem 0; opacity: 0; visibility: hidden; display: flex; flex-direction: column; transition: 0.3s; transform: translateY(15px); 
+        }
+        .dropdown:hover .drop-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .drop-menu a { display: block; padding: 0.8rem 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.8rem; }
+        .drop-menu a:hover { color: var(--primary); background: rgba(0, 217, 255, 0.05); }
+
+        /* Espaçamento para compensar o header absoluto */
+        main { padding-top: 100px; }
+
+        .full-banner { width: 100%; height: auto; line-height: 0; }
+        .full-banner img { width: 100%; height: auto; display: block; }
+
+        .info-section {
+            padding: 6rem 10%; width: 100%; background-color: #f8fafc; 
+            background-image: radial-gradient(circle at 2px 2px, rgba(37, 99, 235, 0.05) 1px, transparent 0), linear-gradient(to right, rgba(37, 99, 235, 0.03) 1px, transparent 0), linear-gradient(to bottom, rgba(37, 99, 235, 0.03) 1px, transparent 0);
+            background-size: 24px 24px, 48px 48px, 48px 48px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        }
+        .container-sm { max-width: 1200px; margin: 0 auto; }
+        
+        .info-section h2 { font-size: 2.2rem; color: var(--text-dark); margin-bottom: 1.5rem; font-weight: 900; line-height: 1.2; text-align: left; }
+        .info-section p { font-size: 1.15rem; color: var(--text-dim); line-height: 1.6; max-width: 850px; text-align: left; }
+
+        .refined-list { list-style: none; border-top: 1px solid rgba(15, 23, 42, 0.1); max-width: 800px; margin-top: 2rem; }
+        .list-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 0; border-bottom: 1px solid rgba(15, 23, 42, 0.1); }
+        .list-item i { color: var(--accent); flex-shrink: 0; }
+        .list-item span { font-size: 1.1rem; color: var(--text-dark); font-weight: 500; }
+
+        .cta-section { padding: 5rem 10%; background: #fff; width: 100%; }
+        .cta-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 3rem; }
+        .cta-text { font-size: 1.3rem; color: var(--text-dark); font-weight: 500; line-height: 1.5; max-width: 700px; }
+        .semperis-link { color: var(--accent); text-decoration: none; font-weight: 800; border-bottom: 1px solid transparent; transition: 0.3s; }
+        .semperis-link:hover { border-bottom-color: var(--accent); }
+        
+        .btn-cta { 
+            background: var(--accent); color: #fff; padding: 1.2rem 2.5rem; border-radius: 4px; 
+            text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; 
+            white-space: nowrap; transition: 0.3s; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.15); 
+        }
+        .btn-cta:hover { background: var(--text-dark); transform: translateY(-3px); }
+
+        footer { padding: 5rem 10%; text-align: center; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 1rem; background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .cta-container { flex-direction: column; text-align: center; } }
+    </style>
+</head>
+<body>
+
+    <div id="loader-wrapper">
+        <div class="loader-panel panel-top"></div>
+        <div class="scan-line"></div>
+        <div class="loader-panel panel-bottom"></div>
+    </div>
+
+    <header>
+        <a href="index.html"><img src="https://i.imgur.com/VC5Re3G.png" class="main-logo"></a>
+        <nav>
+            <a href="index.html" class="nav-link">Início</a>
+            <a href="quemsomos.html" class="nav-link">Quem Somos</a>
+            <div class="dropdown">
+                <span class="drop-trigger">Nossos Parceiros <i data-lucide="chevron-down" size="14"></i></span>
+                <div class="drop-menu">
+                    <a href="abnormal.html">Abnormal IA</a>
+                    <a href="semperis.html" class="active">Semperis</a>
+                    <a href="safetica.html">Safetica</a>
+                </div>
+            </div>
+            <a href="servicos.html" class="nav-link">Serviços</a>
+            <a href="contato.html" class="nav-link">Contato</a>
+        </nav>
+    </header>
+
+    <main class="content-fade">
+        <section class="full-banner">
+            <img src="https://i.imgur.com/qnolmQd.png" alt="Semperis Hero">
+        </section>
+
+        <section class="info-section">
+            <div class="container-sm">
+                <h2>Por que o Active Directory é alvo nº1 dos ataques?</h2>
+                <ul class="refined-list">
+                    <li class="list-item"><i data-lucide="users" size="24"></i><span>Autenticação de todos os usuários</span></li>
+                    <li class="list-item"><i data-lucide="key" size="24"></i><span>Acesso privilegiado aos dados críticos</span></li>
+                    <li class="list-item"><i data-lucide="eye-off" size="24"></i><span>Componentes legados, desatualizados e invisíveis</span></li>
+                    <li class="list-item"><i data-lucide="skull" size="24"></i><span>Ransomware paralisa seus sistemas atacando o AD</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="full-banner">
+            <img src="https://i.imgur.com/pkzk8ay.png" alt="Recovery Solution">
+        </section>
+
+        <section class="info-section" style="background-color: #fff; border-top: none;">
+            <div class="container-sm">
+                <h2>Recuperar para qualquer hardware</h2>
+                <p>Recupere o AD para qualquer hardware - virtual ou físico. Reduza o custo de manutenção de equipamentos sobressalentes, evite a confusão para adquirir novos hardwares, configure rapidamente um ambiente de recuperação e aproveite a nuvem como um local de recuperação de desastres prontamente disponível e econômico.</p>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-container">
+                <p class="cta-text">
+                    Proteja sua identidade com a resiliência da 
+                    <a href="https://www.semperis.com/" target="_blank" class="semperis-link">Semperis</a>. 
+                    Agende um bate-papo de 20 minutos com nossos especialistas para entender como blindar seu AD.
+                </p>
+                <a href="contato.html" class="btn-cta">Agendar Conversa Técnica</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>2026 CyTracks Soluções Cibernéticas.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { document.body.classList.add('loaded'); }, 500);
+        });
+    </script>
+</body>
+</html>

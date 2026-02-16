@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyTracks Soluções Cibernéticas</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/ISlc727.png">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --bg: #000000; --primary: #00d9ff; --text-dim: #94a3b8; --card-bg: rgba(5, 5, 5, 0.9); --border: rgba(255, 255, 255, 0.05); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); background-image: url('https://i.imgur.com/ro5eWLC.png'); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; position: relative; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: -1; pointer-events: none; }
+        @keyframes smoothFadeUp { from { opacity: 0; transform: translateY(20px); filter: blur(2px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .animate-discreet { opacity: 0; animation: smoothFadeUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        .d-1 { animation-delay: 0.1s; } .d-2 { animation-delay: 0.3s; } .d-3 { animation-delay: 0.5s; } .d-4 { animation-delay: 0.6s; } .d-5 { animation-delay: 0.7s; } .d-6 { animation-delay: 0.8s; } .d-7 { animation-delay: 1.0s; }
+        header { padding: 0 10%; height: 100px; display: flex; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; width: 100%; background: transparent; z-index: 1000; }
+        .main-logo { height: 48px; }
+        nav { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-link { color: var(--text-dim); text-decoration: none; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; position: relative; padding: 0.5rem 0; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--primary); transition: 0.3s; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        .dropdown { position: relative; height: 100%; display: flex; align-items: center; cursor: pointer; }
+        .drop-trigger { display: flex; align-items: center; gap: 0.5rem; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; }
+        .drop-menu { position: absolute; top: 85px; left: -20px; background: #0d1117; border: 1px solid var(--border); border-top: 3px solid var(--primary); min-width: 240px; padding: 0.8rem 0; opacity: 0; visibility: hidden; display: flex; flex-direction: column; transition: 0.3s; transform: translateY(10px); }
+        .dropdown:hover .drop-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .drop-menu a { display: block; padding: 0.8rem 1.5rem; color: var(--text-dim); text-decoration: none; font-size: 0.8rem; }
+        .drop-menu a:hover { background: rgba(0, 217, 255, 0.05); color: var(--primary); }
+
+        .services-intro-section { padding: 180px 10% 60px; max-width: 1400px; margin: 0 auto; }
+        .services-intro-section h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 3rem; letter-spacing: -1.5px; }
+        .services-intro-section h1 span { color: var(--primary); }
+        .intro-text-block { max-width: 950px; }
+        .intro-text-block p { font-size: 1.15rem; line-height: 1.8; margin-bottom: 2rem; text-align: justify; }
+        .marker-text { font-weight: 700; color: #fff; margin-top: 4rem; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; border-left: 3px solid var(--primary); padding-left: 1.5rem; }
+
+        .services-container { padding: 0 10% 120px; max-width: 1500px; margin: 0 auto; text-align: center; }
+        .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 5rem; }
+        .service-card { background: var(--card-bg); backdrop-filter: blur(12px); padding: 2.5rem 1.5rem; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.2rem; text-align: left; transition: 0.4s; }
+        .service-card:hover { transform: translateY(-12px); border-color: var(--primary); box-shadow: 0 25px 50px -12px rgba(0, 217, 255, 0.2); }
+        .service-card i { color: var(--primary); }
+        .btn-saiba-mais { display: inline-block; padding: 1.2rem 3.5rem; border: 1px solid var(--primary); color: var(--primary); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .btn-saiba-mais:hover { color: #000; background: var(--primary); }
+
+        footer { padding: 4rem 10%; text-align: center; border-top: 1px solid var(--border); color: #475569; font-size: 0.9rem; background: #030508; margin-top: auto; }
+        @media (max-width: 1200px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html"><img src="https://i.imgur.com/VC5Re3G.png" class="main-logo"></a>
+        <nav>
+            <a href="index.html" class="nav-link">Início</a><a href="quemsomos.html" class="nav-link">Quem Somos</a>
+            <div class="dropdown"><span class="drop-trigger">Nossos Parceiros <i data-lucide="chevron-down" size="16"></i></span><div class="drop-menu"><a href="abnormal.html">Abnormal IA</a><a href="semperis.html">Semperis</a><a href="safetica.html">Safetica</a></div></div>
+            <a href="servicos.html" class="nav-link active">Serviços</a><a href="contato.html" class="nav-link">Contato</a>
+        </nav>
+    </header>
+    <main>
+        <section class="services-intro-section">
+            <h1 class="animate-discreet d-1">Nossos <span>Serviços</span></h1>
+            <div class="intro-text-block animate-discreet d-2">
+                <p>Nossa equipe apoia organizações na identificação e mitigação de riscos de segurança com base em análise técnica. Atuamos de forma consultiva para definir controles alinhados ao seu negócio.</p>
+                <p class="marker-text">Segurança orientada à redução de risco.</p>
+            </div>
+        </section>
+        <section class="services-container">
+            <div class="services-grid">
+                <div class="service-card animate-discreet d-3"><i data-lucide="layers" size="28"></i><h3>Serviços Personalizados</h3><p>Apoiamos o desenho e otimização da segurança conforme seu ambiente.</p></div>
+                <div class="service-card animate-discreet d-4"><i data-lucide="shield" size="28"></i><h3>NGFW/Proteção de Dados</h3><p>Implantação eficaz de soluções de segurança de rede e dados.</p></div>
+                <div class="service-card animate-discreet d-5"><i data-lucide="scan" size="28"></i><h3>Vulnerabilidade</h3><p>Avaliação contínua para visibilidade e controle de risco.</p></div>
+                <div class="service-card animate-discreet d-6"><i data-lucide="graduation-cap" size="28"></i><h3>Treinamento</h3><p>Capacitação adaptada às necessidades da sua empresa.</p></div>
+            </div>
+            <a href="contato.html" class="btn-saiba-mais animate-discreet d-7">Saiba Mais</a>
+        </section>
+    </main>
+    <footer><p>2026 CyTracks Soluções Cibernéticas. Todos os direitos reservados.</p></footer>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
